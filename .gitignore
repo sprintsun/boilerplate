@@ -1,0 +1,6 @@
+.DS_Store
+/node_modules/*
+.idea
+_npm-shrinkwrap.json
+npm-debug.log
+node_modules

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <script>
+    var hot = true;
+    if (!hot) {
+      var link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = '../dist/style.css';
+      document.write(link.outerHTML);
+    }
+  </script>
+</head>
+<body>
+<div id="root"></div>
+<script>
+  var script = document.createElement('script');
+  script.src = hot ? 'http://localhost:3000/dist/bundle.js' : '../dist/bundle.js';
+  document.write(script.outerHTML);
+</script>
+</body>
+</html>

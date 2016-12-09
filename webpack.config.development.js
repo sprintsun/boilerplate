@@ -1,0 +1,70 @@
+/* eslint-disable max-len */
+/**
+ * Build config for development process that uses Hot-Module-Replacement
+ * https://webpack.github.io/docs/hot-module-replacement-with-webpack.html
+ */
+
+const webpack = require('webpack');
+const validate = require('webpack-validator');
+const merge = require('webpack-merge');
+const formatter = require('eslint-formatter-pretty');
+const baseConfig = require('./webpack.config.base');
+
+const port = process.env.PORT || 3000
+const hotMiddlewareScript = `webpack-hot-middleware/client?path=http://localhost:${port}/__webpack_hmr&reload=true`
+
+module.exports = validate(merge(baseConfig, {
+  debug: true,
+
+  devtool: 'cheap-module-eval-source-map',
+
+  entry: {
+    app: [
+      './src/index.js',
+      hotMiddlewareScript
+    ]
+  },
+
+  output: {
+    publicPath: `http://localhost:${port}/dist/`
+  },
+
+  module: {
+    preLoaders: [
+      {
+        test: /\.js$/,
+        loader: 'eslint-loader',
+        exclude: /node_modules/
+      }
+    ],
+    loaders: [
+      {
+        test: /\.css$/,
+        loaders: [
+          'style-loader',
+          'css-loader?sourceMap'
+        ]
+      }
+    ]
+  },
+
+  eslint: {
+    formatter: formatter
+  },
+
+  plugins: [
+    new webpack.optimize.OccurenceOrderPlugin(),
+    // https://webpack.github.io/docs/hot-module-replacement-with-webpack.html
+    new webpack.HotModuleReplacementPlugin(),
+
+    // “If you are using the CLI, the webpack process will not exit with an error code by enabling this plugin.”
+    // https://github.com/webpack/docs/wiki/list-of-plugins#noerrorsplugin
+    new webpack.NoErrorsPlugin(),
+
+    // NODE_ENV should be production so that modules do not perform certain development checks
+    new webpack.DefinePlugin({
+      'process.env.NODE_ENV': JSON.stringify('dev')
+    })
+  ]
+}))
+
